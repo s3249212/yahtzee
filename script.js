@@ -1,71 +1,71 @@
-class Field {
-    constructor(){
-        this._filled = false;
-        this._value = "";
+function rollDice() {
+    let dice = [];
+    for (let i = 0; i < 5; i++){
+        dice.push(Math.floor(6 * Math.random()) + 1);
     }
+    return [6, 6, 6, 3, 3];
+}
 
-    onclick(dice){
-        if (!this._filled) {
-            this._filled = true;
-            if (this.validate(dice)) {
-                this._value = this.score(dice);  
-            } else {
-                this._value = "x"
-            }
+function toCounts(dice){
+    let counts = [];
+    for (let i = 0; i < 6; i++){
+        counts.push(dice.filter(e => e == i + 1).length);
+    }
+    return counts;
+}
+
+function isStraight(counts, desiredNumberInOrder){
+    const length = counts.length;
+    let i = 0;
+    let c = 0;
+    while (i < length - desiredNumberInOrder) {
+        while (i + c < length && c < desiredNumberInOrder && counts[i + c]) {
+            c++;
+        }
+        if (c >= desiredNumberInOrder){
+            return true;
+        } else {
+            i += c + 1;
+            c = 0;
         }
     }
-
-    get value() {
-        return typeof this._value === "number" ? this._value: 0;
-    }
-
-    get displayValue() {
-        return this._value
-    }
+    return false;
 }
 
-class NumberField extends Field{
-    constructor(number) {
-        this._number = number;
-        this.validate = dice => true;
+console.log(toCounts(rollDice()));
+
+
+function fillOutEverything(){
+    dice = rollDice()
+
+    console.log();
+    // show dice
+    diceElements = document.getElementById('dice').getElementsByTagName('td');
+    for (let i = 0; i < 5; i++){
+        diceElements[i].textContent = dice[i];
     }
 
-    score(dice) {
-        return this._number * dice.map(die => die === this._number).reduce((acc, v) => acc + v);
+    counts = toCounts(dice);
+    console.log(counts);
+    
+    numbers = ['aces', 'twos', 'threes', 'fours', 'fives', 'sixes'];
+    console.log(numbers.entries())
+    for ([index, numberName] of numbers.entries()){
+        document.getElementById(numberName).textContent = (index + 1) * counts[index];
     }
+
+    document.getElementById('3oak').textContent = counts.some(e => e >= 3) ? dice.reduce((sum, cur) => sum + cur): 0;
+    document.getElementById('4oak').textContent = counts.some(e => e >= 4) ? dice.reduce((sum, cur) => sum + cur): 0;
+    document.getElementById('full_house').textContent = (counts.some(e => e == 3) && counts.some(e => e == 2)) ? 25: 0;
+    document.getElementById('small_straight').textContent = isStraight(counts, 4) ? 30: 0;
+    document.getElementById('large_straight').textContent = isStraight(counts, 5) ? 40: 0;
+    document.getElementById('top_score').textContent = counts.some(e => e == 5)? 50: 0;
+    document.getElementById('chance').textContent = dice.reduce((sum, cur) => sum + cur);
 }
 
-class OfAKind extends Field{
-    constructor(number) {
-        this._number = number;
-    }
 
-    validate(dice) {
-        let counts = [0, 0, 0, 0, 0, 0];
-        for (die in dice){
-            counts[die - 1]++;
-            if (counts[die - 1] >= this._number) {
-                return true;
-            }
-        }
-        return false;
-    }
-}
 
-class OfAKind extends Field{
-    constructor(number) {
-        this._number = number;
-    }
+document.getElementById('roll').addEventListener('click', fillOutEverything);
 
-    validate(dice) {
-        let counts = [0, 0, 0, 0, 0, 0];
-        for (die in dice){
-            counts[die - 1]++;
-            if (counts[die - 1] >= this._number) {
-                return true;
-            }
-        }
-        return false;
-    }
-}
+
 
