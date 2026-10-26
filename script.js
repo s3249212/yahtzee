@@ -3,7 +3,7 @@ function rollDice() {
     for (let i = 0; i < 5; i++){
         dice.push(Math.floor(6 * Math.random()) + 1);
     }
-    return [6, 6, 6, 3, 3];
+    return dice;
 }
 
 function toCounts(dice){
