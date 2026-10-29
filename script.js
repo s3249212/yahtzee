@@ -32,28 +32,25 @@ function isStraight(counts, desiredNumberInOrder){
     return false;
 }
 
-console.log(toCounts(rollDice()));
-
-
 function fillOutEverything(){
     dice = rollDice()
 
-    console.log();
     // show dice
     diceElements = document.getElementById('dice').getElementsByTagName('td');
     for (let i = 0; i < 5; i++){
         diceElements[i].textContent = dice[i];
     }
 
+    // count the number of dice that landed on each side
     counts = toCounts(dice);
-    console.log(counts);
     
+    // calculate and show the results for the first half of the table
     numbers = ['aces', 'twos', 'threes', 'fours', 'fives', 'sixes'];
-    console.log(numbers.entries())
     for ([index, numberName] of numbers.entries()){
         document.getElementById(numberName).textContent = (index + 1) * counts[index];
     }
 
+    // calculate and show the results for the second half of the table
     document.getElementById('3oak').textContent = counts.some(e => e >= 3) ? dice.reduce((sum, cur) => sum + cur): 0;
     document.getElementById('4oak').textContent = counts.some(e => e >= 4) ? dice.reduce((sum, cur) => sum + cur): 0;
     document.getElementById('full_house').textContent = (counts.some(e => e == 3) && counts.some(e => e == 2)) ? 25: 0;
@@ -63,9 +60,4 @@ function fillOutEverything(){
     document.getElementById('chance').textContent = dice.reduce((sum, cur) => sum + cur);
 }
 
-
-
 document.getElementById('roll').addEventListener('click', fillOutEverything);
-
-
-
